@@ -1,0 +1,12 @@
+[data-testid="stWidgetLabel"]{
+    position: fixed;
+    bottom: 0;
+    width: 50%;
+    justify-content: center;
+    align-items: end;
+    margin-bottom: 0.5rem;
+   }
+[data-testid="stMarkdownContainer"]{
+    align-text: center
+}
+
