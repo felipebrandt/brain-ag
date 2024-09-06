@@ -166,6 +166,7 @@ def update():
                                              created_at=datetime.datetime.now())
                     st.query_params['id'] = document
                     st.success(f'Fazenda ***{name}*** Salva com Sucesso')
+                    st.session_state.culture_amount = 1
                     time.sleep(1.5)
                     st.switch_page('main.py')
 
@@ -298,6 +299,7 @@ def insert():
                                          created_at=datetime.datetime.now())
                     st.query_params['id'] = document
                     st.success(f'Fazenda ***{name}*** Salva com Sucesso')
+                    st.session_state.culture_amount = 1
                     time.sleep(1.5)
                     st.switch_page('main.py')
                 else:
