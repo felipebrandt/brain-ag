@@ -62,11 +62,22 @@ class Farmer(BaseModel):
         return True if Farmer.select().where(Farmer.document == document) else False
 
     @staticmethod
-    def get_farmer(document):
-        has_farmer = Farmer.select().where(Farmer.document == document)
+    def get_farmer(document=None):
+        if document:
+            has_farmer = Farmer.select().where(Farmer.document == document)
+        else:
+            has_farmer = Farmer.select()
+
         if has_farmer:
-            return has_farmer.get()
-        return None
+            return [farmer for farmer in has_farmer]
+        return []
+
+    @staticmethod
+    def get_farmer_select_box_options():
+        option_list = ['Todos']
+        for farmer in Farmer.get_farmer():
+            option_list.append(f'{farmer.document}-{farmer.name}')
+        return option_list
 
 
 class Farm(BaseModel):
@@ -108,18 +119,36 @@ class Farm(BaseModel):
         return Farm.select(fn.SUM(Farm.total_area)).scalar()
 
     @staticmethod
-    def get_farm_group_by_state():
+    def get_farm_group_by_state(farmer_id=None):
         result = {}
-        for query in Farm.select(Farm.state, fn.Count(Farm.state).alias('amount')).group_by(Farm.state):
-            result[query.state] = query.amount
+        if farmer_id:
+            for query in Farm.select(Farm.state,
+                                     fn.Count(Farm.state).alias('amount')).where(Farm.farmer_owner == farmer_id)\
+                    .group_by(Farm.state):
+                result[query.state] = query.amount
+        else:
+            for query in Farm.select(Farm.state, fn.Count(Farm.state).alias('amount')).group_by(Farm.state):
+                result[query.state] = query.amount
         return result
 
     @staticmethod
     def get_farm_group_by_soil_use(farm_id=None):
         result = {}
-        for query in Farm.select(fn.Sum(Farm.vegetation_area).alias('vegetation_area'), fn.Sum(Farm.agricultural_area).alias('agricultural_area')):
-            result['Area de Vegetação'] = query.vegetation_area
-            result['Area Agricultável'] = query.agricultural_area
+        if farm_id:
+            for query in Farm.select(fn.Sum(Farm.vegetation_area).alias('vegetation_area'),
+                                     fn.Sum(Farm.agricultural_area).alias('agricultural_area'))\
+                    .where(Farm.farmer_owner == farm_id):
+                if query.vegetation_area:
+                    result['Area de Vegetação'] = query.vegetation_area
+                if query.vegetation_area:
+                    result['Area Agricultável'] = query.agricultural_area
+        else:
+            for query in Farm.select(fn.Sum(Farm.vegetation_area).alias('vegetation_area'),
+                                     fn.Sum(Farm.agricultural_area).alias('agricultural_area')):
+                if query.vegetation_area:
+                    result['Area de Vegetação'] = query.vegetation_area
+                if query.vegetation_area:
+                    result['Area Agricultável'] = query.agricultural_area
         return result
 
 
@@ -143,12 +172,16 @@ class Culture(BaseModel):
         return [culture.culture_type for culture in Culture.select().where(Culture.farm == farm_id)]
 
     @staticmethod
-    def get_farm_group_by_culture():
+    def get_farm_group_by_culture(farmer_id=None):
         result = {}
-        for query in Culture.select(Culture.culture_type, fn.Count(Culture.culture_type).alias('amount')).group_by(Culture.culture_type):
-            result[query.culture_type] = query.amount
+        if farmer_id:
+            for query in Culture.select(Culture.culture_type, fn.Count(Culture.culture_type).alias('amount')).join(Farm).where(Farm.farmer_owner == farmer_id).group_by(Culture.culture_type):
+                result[query.culture_type] = query.amount
+        else:
+            for query in Culture.select(Culture.culture_type, fn.Count(Culture.culture_type).alias('amount')).group_by(Culture.culture_type):
+                result[query.culture_type] = query.amount
         return result
 
+
 if __name__ == '__main__':
-    # db.create_tables([DocumentType, Farmer, Farm, CultureType, Culture])
-    Farm.get_farm_group_by_soil_use()
+    db.create_tables([DocumentType, Farmer, Farm, CultureType, Culture])

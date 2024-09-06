@@ -1,4 +1,4 @@
-from src.domain.pages_models.st_farm_model import insert, search, update, manage
+from src.adapters.pages_models.st_farm_model import insert, search, update, manage
 import streamlit as st
 
 with open('src/adapters/static/css/main.css') as file:

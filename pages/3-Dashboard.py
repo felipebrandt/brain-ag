@@ -1,31 +1,38 @@
 import streamlit as st
-from src.domain.models import Farm, Culture
+from src.domain.models import Farmer, Farm, Culture
 import matplotlib.pyplot as plt
+from streamlit_extras.metric_cards import style_metric_cards
 
 
-amount_col, pie_state_col = st.columns(2)
+selected_farmer = st.selectbox('Escolha um Produtor', options=Farmer.get_farmer_select_box_options())
 
-with amount_col:
-    st.title(Farm.get_farm_count())
 
-with pie_state_col:
-    result = Farm.get_farm_group_by_state()
+if selected_farmer == 'Todos':
+    farmer_id = None
+else:
+    farmer_id = selected_farmer.split('-')[0]
+
+st.metric(label="Total de Fazendas", value=Farm.get_farm_count(farmer_id))
+style_metric_cards()
+
+
+result_state = Farm.get_farm_group_by_state(farmer_id)
+if result_state:
     pie_state, state_ax = plt.subplots()
-    state_ax.pie(result.values(), labels=result.keys(), autopct='%1.1f%%', shadow=True, startangle=90)
-    state_ax.axis('equal')
+    state_ax.pie(result_state.values(), labels=result_state.keys(), autopct='%1.1f%%', shadow=True, startangle=90)
     st.pyplot(pie_state)
 
-pie_culture_col, pie_soil_use_col = st.columns(2)
-with pie_culture_col:
-    result = Culture.get_farm_group_by_culture()
+
+result_culture = Culture.get_farm_group_by_culture(farmer_id)
+if result_culture:
     pie_state, state_ax = plt.subplots()
-    state_ax.pie(result.values(), labels=result.keys(), autopct='%1.1f%%', shadow=True, startangle=90)
-    state_ax.axis('equal')
+    state_ax.pie(result_culture.values(), labels=result_culture.keys(), autopct='%1.1f%%', shadow=True, startangle=90)
     st.pyplot(pie_state)
 
-with pie_soil_use_col:
-    result = Farm.get_farm_group_by_soil_use()
+
+result = Farm.get_farm_group_by_soil_use(farmer_id)
+
+if result:
     pie_state, state_ax = plt.subplots()
     state_ax.pie(result.values(), labels=result.keys(), autopct='%1.1f%%', shadow=True, startangle=90)
-    state_ax.axis('equal')
     st.pyplot(pie_state)

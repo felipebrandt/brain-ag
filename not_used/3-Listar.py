@@ -1,5 +1,5 @@
 import time
-from src.domain.pages_models.st_farmer_model import update
+from src.adapters.pages_models.st_farmer_model import update
 import streamlit as st
 from src.domain.models import Farmer
 

@@ -36,11 +36,15 @@ def update():
                               value=farm.state,
                               label_visibility='hidden')
 
-    area = st.number_input(label='area',
-                           placeholder='Insira a Área Total da Fazenda...',
-                           value=farm.total_area,
-                           min_value=0.1,
-                           label_visibility='hidden')
+    label_area_col, box_area_col = st.columns(2)
+    with label_area_col:
+        st.write('Area Total')
+    with box_area_col:
+        area = st.number_input(label='area',
+                               placeholder='Insira a Área Total da Fazenda...',
+                               min_value=0.1,
+                               value=farm.total_area,
+                               label_visibility='hidden')
 
     label_last_agricultural, value_last_agricultural = st.columns(2)
     with label_last_agricultural:
@@ -55,20 +59,35 @@ def update():
         st.write(f':blue[***{farm.vegetation_area}***]')
 
     if area:
-        agricultural_area = st.slider('Area Agricultável Nova',
-                                      min_value=0.0,
-                                      max_value=area,
-                                      label_visibility='hidden')
+        label_agricultural_col, slide_agricultural_col = st.columns(2)
+        with label_agricultural_col:
+            st.write('Área Agricultável')
+
+        with slide_agricultural_col:
+            agricultural_area = st.slider('Area Agricultável Nova',
+                                          min_value=0.0,
+                                          max_value=area,
+                                          label_visibility='hidden')
         if agricultural_area > 0 and agricultural_area != area:
-            vegetation_area = st.slider('Area de Vegetação Nova',
-                                        min_value=0.0,
-                                        max_value=area-agricultural_area,
-                                        label_visibility='hidden')
+            label_vegetation_col, slide_vegetation_col = st.columns(2)
+            with label_vegetation_col:
+                st.write('Área de Vegetação')
+
+            with slide_vegetation_col:
+                vegetation_area = st.slider('Area de Vegetação Nova',
+                                            min_value=0.0,
+                                            max_value=area - agricultural_area,
+                                            label_visibility='hidden')
         elif agricultural_area != area:
-            vegetation_area = st.slider('Area de Vegetação Nova',
-                                        min_value=0.0,
-                                        max_value=area,
-                                        label_visibility='hidden')
+            label_vegetation_col, slide_vegetation_col = st.columns(2)
+            with label_vegetation_col:
+                st.write('Área de Vegetação')
+
+            with slide_vegetation_col:
+                vegetation_area = st.slider('Area de Vegetação Nova',
+                                            min_value=0.0,
+                                            max_value=area,
+                                            label_visibility='hidden')
 
     if 'culture_amount' not in st.session_state:
         st.session_state.culture_amount = 1
@@ -178,19 +197,49 @@ def insert():
                              placeholder='Digite o Estado (UF) da Fazenda...',
                              label_visibility='hidden')
 
-    area = st.number_input(label='area',
-                           placeholder='Insira a Área Total da Fazenda...',
-                           min_value=0.1)
+    label_area_col, box_area_col = st.columns(2)
+    with label_area_col:
+        st.write('Area Total')
+    with box_area_col:
+        area = st.number_input(label='area',
+                               placeholder='Insira a Área Total da Fazenda...',
+                               min_value=0.1,
+                               label_visibility='hidden')
+
     has_farm_saved = Farm.has_farm(name)
     if has_farm_saved:
         st.error(f'Já existe uma fazenda com este nome: ***{name}***')
 
     if area:
-        agricultural_area = st.slider('Area Agricultável', min_value=0.0, max_value=area)
+        label_agricultural_col, slide_agricultural_col = st.columns(2)
+        with label_agricultural_col:
+            st.write('Área Agricultável')
+
+        with slide_agricultural_col:
+            agricultural_area = st.slider('Area Agricultável Nova',
+                                          min_value=0.0,
+                                          max_value=area,
+                                          label_visibility='hidden')
         if agricultural_area > 0 and agricultural_area != area:
-            vegetation_area = st.slider('Area de Vegetação', min_value=0.0, max_value=area-agricultural_area)
+            label_vegetation_col, slide_vegetation_col = st.columns(2)
+            with label_vegetation_col:
+                st.write('Área de Vegetação')
+
+            with slide_vegetation_col:
+                vegetation_area = st.slider('Area de Vegetação Nova',
+                                            min_value=0.0,
+                                            max_value=area-agricultural_area,
+                                            label_visibility='hidden')
         elif agricultural_area != area:
-            vegetation_area = st.slider('Area de Vegetação', min_value=0.0, max_value=area)
+            label_vegetation_col, slide_vegetation_col = st.columns(2)
+            with label_vegetation_col:
+                st.write('Área de Vegetação')
+
+            with slide_vegetation_col:
+                vegetation_area = st.slider('Area de Vegetação Nova',
+                                            min_value=0.0,
+                                            max_value=area,
+                                            label_visibility='hidden')
 
     if 'culture_amount' not in st.session_state:
         st.session_state.culture_amount = 1
@@ -229,7 +278,8 @@ def insert():
 
     if raw_document:
         document = re.sub('[^0-9]', '', raw_document)
-        farmer = Farmer.get_farmer(document)
+        farmer_list = Farmer.get_farmer(document)
+        farmer = farmer_list.pop()
         if farmer:
             st.success(f"Produtor Encontrado: ***{farmer.name}***")
             if insert_button:

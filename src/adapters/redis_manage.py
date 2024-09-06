@@ -10,7 +10,7 @@ def get_key(key):
 
 
 class EnvironmentKeys:
-    BASE = 'local'
+    BASE = ''
     DB = get_key('BA_DB')
     HOST = get_key('BA_HOST')
     USER = get_key('BA_USER')
@@ -24,17 +24,8 @@ class EnvironmentKeys:
 
 
 if __name__ == '__main__':
-    # redis_client.set('BA_DB', '')
-    # redis_client.set('BA_HOST', '')
-    # redis_client.set('BA_USER', '')
-    # redis_client.set('BA_PASSWORD', '')
-    # redis_client.set('BA_PORT', '5432')
-    # redis_client.set('BA_DBL', 'brain_agriculture')
-    # redis_client.set('BA_HOSTL', 'localhost')
-    # redis_client.set('BA_USERL', 'postgres')
-    # redis_client.set('BA_PASSWORDL', 'Pohgma@1980')
-    # redis_client.set('BA_PORTL', '5432')
     pass
+
 
 
 

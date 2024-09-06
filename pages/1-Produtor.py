@@ -1,5 +1,5 @@
 import streamlit as st
-from src.domain.pages_models.st_farmer_model import update, insert, search, manage
+from src.adapters.pages_models.st_farmer_model import update, insert, search, manage
 
 with open('src/adapters/static/css/main.css') as file:
     st.markdown(f'<style>{file.read()}</style>', unsafe_allow_html=True)
