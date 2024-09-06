@@ -54,7 +54,7 @@ def update():
 
     label_last_vegetation, value_last_vegetation = st.columns(2)
     with label_last_vegetation:
-        st.write(f':blue[Área Agricultável Atual:]')
+        st.write(f':blue[Área de Vegetação Atual:]')
     with value_last_vegetation:
         st.write(f':blue[***{farm.vegetation_area}***]')
 
