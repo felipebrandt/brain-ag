@@ -6,7 +6,7 @@ from src.domain.validation_utils import validate_cpf, validate_cnpj
 import re
 
 
-def update():
+def update(has_validation):
     document = st.query_params.get('id')
     has_farmer = Farmer.select().where(Farmer.document == document)
     farmer = has_farmer.get()
@@ -32,19 +32,7 @@ def update():
         update_button = st.form_submit_button(label='Salvar')
         if update_button:
             if name:
-                is_valid = False
-                if document_type == 'CPF':
-                    if validate_cpf(raw_document):
-                        is_valid = True
-                        st.success("CPF válido! ✔️")
-                    else:
-                        st.error("CPF inválido. ❌")
-                else:
-                    if validate_cnpj(raw_document):
-                        is_valid = True
-                        st.success("CNPJ válido! ✔️")
-                    else:
-                        st.error("CNPJ inválido. ❌")
+                is_valid = get_validation(has_validation, document_type, raw_document)
                 if is_valid:
                     farmer.name = name
                     farmer.document = re.sub('[^0-9]', '', raw_document)
@@ -58,7 +46,7 @@ def update():
                 st.warning('Digite o Nome do Produtor')
 
 
-def insert():
+def insert(has_validation):
     with st.form("insert_form", clear_on_submit=True):
         name = st.text_input(label='name',
                              placeholder='Digite o nome do produtor...',
@@ -75,21 +63,9 @@ def insert():
         insert_button = st.form_submit_button(label='Salvar')
         if insert_button:
             if name:
-                is_valid = False
                 document = re.sub('[^0-9]', '', raw_document)
                 if not Farmer.has_farmer(document):
-                    if document_type == 'CPF':
-                        if validate_cpf(raw_document):
-                            is_valid = True
-                            st.success("CPF válido! ✔️")
-                        else:
-                            st.error("CPF inválido. ❌")
-                    else:
-                        if validate_cnpj(raw_document):
-                            is_valid = True
-                            st.success("CNPJ válido! ✔️")
-                        else:
-                            st.error("CNPJ inválido. ❌")
+                    is_valid = get_validation(has_validation, document_type, raw_document)
                     if is_valid:
                         new_farmer = Farmer().create_new(name, document, document_type)
                         st.success(f"***{new_farmer.name}***: Salvo com Sucesso ✔️")
@@ -153,3 +129,21 @@ def manage():
                 time.sleep(1)
                 st.rerun()
 
+
+def get_validation(has_validation, document_type, raw_document):
+    if has_validation:
+        if document_type == 'CPF':
+            if validate_cpf(raw_document):
+                st.success("CPF válido! ✔️")
+                return True
+            else:
+                st.error("CPF inválido. ❌")
+        else:
+            if validate_cnpj(raw_document):
+                st.success("CNPJ válido! ✔️")
+                return True
+            else:
+                st.error("CNPJ inválido. ❌")
+    else:
+        return True
+    return False

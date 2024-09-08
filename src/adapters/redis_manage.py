@@ -10,7 +10,7 @@ def get_key(key):
 
 
 class EnvironmentKeys:
-    BASE = getenv('BASE', '')
+    BASE = getenv('BASE', 'local')
     DB = get_key('BA_DB')
     HOST = get_key('BA_HOST')
     USER = get_key('BA_USER')

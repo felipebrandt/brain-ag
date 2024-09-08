@@ -12,9 +12,15 @@ if selected_farmer == 'Todos':
 else:
     farmer_id = selected_farmer.split('-')[0]
 
-st.metric(label="Total de Fazendas", value=Farm.get_farm_count(farmer_id))
-style_metric_cards()
+amount_col, area_col = st.columns(2)
 
+with amount_col:
+    st.metric(label="Total de Fazendas", value=Farm.get_farm_count(farmer_id))
+    style_metric_cards()
+
+with area_col:
+    st.metric(label='Area Total das Fazendas (ha)', value=Farm.get_farm_total_area(farmer_id))
+    style_metric_cards()
 
 result_state = Farm.get_farm_group_by_state(farmer_id)
 if result_state:
