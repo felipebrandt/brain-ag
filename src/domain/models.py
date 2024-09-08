@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from peewee import *
 from src.adapters.db_conection import db
@@ -14,23 +14,23 @@ class BaseModel(Model):
     def save_model(self):
         if db.is_closed():
             db.connect()
-        self.created_at = datetime.datetime.now()
+        self.created_at = datetime.now()
         self.save()
 
     def update_model(self):
         if db.is_closed():
             db.connect()
-        self.updated_at = datetime.datetime.now()
+        self.updated_at = datetime.now()
         self.save()
 
 
 class DocumentType(BaseModel):
-    name = CharField(primary_key=True)
+    document_type_name = CharField(primary_key=True)
 
 
 class Farmer(BaseModel):
     document = CharField(max_length=14, primary_key=True)
-    document_type = ForeignKeyField(DocumentType, to_field='name')
+    document_type = ForeignKeyField(DocumentType, to_field='document_type_name', on_update='cascade')
     name = CharField(max_length=255)
 
     def create_new(self, name, document, document_type):
@@ -39,7 +39,7 @@ class Farmer(BaseModel):
         return self.create(name=name,
                            document=document,
                            document_type=document_type,
-                           created_at=datetime.datetime.now())
+                           created_at=datetime.now())
 
     def delete_farmer(self):
         if db.is_closed():
@@ -54,8 +54,11 @@ class Farmer(BaseModel):
     def update_model(self):
         if db.is_closed():
             db.connect()
-        self.updated_at = datetime.datetime.now()
-        self.save()
+        # self.save()
+        self.update(name=self.name,
+                    document_type=self.document_type,
+                    document=self.document,
+                    updated_at=datetime.now()).execute()
 
     @staticmethod
     def has_farmer(document):
@@ -83,7 +86,7 @@ class Farmer(BaseModel):
 class Farm(BaseModel):
     farm_id = AutoField(primary_key=True)
     name = CharField(max_length=120, unique=True)
-    farmer_owner = ForeignKeyField(Farmer, to_field='document', on_delete='cascade')
+    farmer_owner = ForeignKeyField(Farmer, to_field='document', on_delete='cascade', on_update='cascade')
     city = CharField(max_length=120)
     state = CharField(max_length=2)
     total_area = FloatField()
@@ -109,7 +112,7 @@ class Farm(BaseModel):
     @staticmethod
     def get_farm_count(farmer_id=None):
         if farmer_id:
-            return Farm.select().where(Farm.farmer_owner==farmer_id).count()
+            return Farm.select().where(Farm.farmer_owner == farmer_id).count()
         return Farm.select().count()
 
     @staticmethod
@@ -164,7 +167,7 @@ class CultureType(BaseModel):
 
 
 class Culture(BaseModel):
-    farm = ForeignKeyField(Farm, to_field='farm_id', on_delete='cascade')
+    farm = ForeignKeyField(Farm, to_field='farm_id', on_delete='cascade', on_update='cascade')
     culture_type = ForeignKeyField(CultureType, to_field='culture_type_name')
 
     @staticmethod
@@ -184,4 +187,15 @@ class Culture(BaseModel):
 
 
 if __name__ == '__main__':
+    #Criação das tabelas
     db.create_tables([DocumentType, Farmer, Farm, CultureType, Culture])
+
+    #Popular tabelas com dados de configuração
+    for document_type in ['CPF', 'CNPJ']:
+        DocumentType.create(document_type_name=document_type,
+                            created_at=datetime.now())
+
+    for culture_type in ['Soja', 'Milho', 'Algodão', 'Café', 'Cana de Açúcar']:
+        CultureType.create(culture_type_name=culture_type,
+                           created_at=datetime.now())
+

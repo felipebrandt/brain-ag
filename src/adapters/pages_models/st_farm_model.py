@@ -145,8 +145,10 @@ def update():
 
     if raw_document:
         document = re.sub('[^0-9]', '', raw_document)
-        farmer = Farmer.get_farmer(document)
-        if farmer:
+        farmer_list = Farmer.get_farmer(document)
+        if farmer_list:
+            farmer = farmer_list.pop()
+            st.success(f"Produtor Encontrado: ***{farmer.name}***")
             if update_button:
                 if name and area and city and len(state) == 2:
                     farm.name = name
@@ -171,7 +173,7 @@ def update():
                     st.switch_page('main.py')
 
         else:
-            st.warning("Produtor não Encontrado")
+            st.error("Produtor Não Encontrado")
 
 
 def insert():
@@ -280,8 +282,8 @@ def insert():
     if raw_document:
         document = re.sub('[^0-9]', '', raw_document)
         farmer_list = Farmer.get_farmer(document)
-        farmer = farmer_list.pop()
-        if farmer:
+        if farmer_list:
+            farmer = farmer_list.pop()
             st.success(f"Produtor Encontrado: ***{farmer.name}***")
             if insert_button:
                 if name and area and city and len(state) == 2 and not has_farm_saved:
@@ -306,7 +308,7 @@ def insert():
                     st.error('Falta inserir dados importantes: Nome, Area Total, Cidade, Estado')
 
         else:
-            st.warning("Produtor não Encontrado")
+            st.error("Produtor Não Encontrado")
 
 
 def search():

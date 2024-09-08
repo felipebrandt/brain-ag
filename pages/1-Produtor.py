@@ -11,7 +11,7 @@ with label_has_validation_col:
     st.write('Ativar Validação de CPF/CNPJ')
 
 with toggle_col:
-    has_validation = not st.toggle('has_validation', label_visibility='hidden')
+    has_validation = st.toggle('has_validation', label_visibility='hidden')
 
 if st.query_params.get('update'):
     update(has_validation)

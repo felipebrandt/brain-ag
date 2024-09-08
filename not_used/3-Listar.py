@@ -13,11 +13,11 @@ for farmer in Farmer.select():
     else:
         name_col, alter_button_col, delete_button_col = st.columns(3)
         with name_col:
-            st.write(f':blue[{farmer.name}]')
+            st.write(f':blue[{farmer.document_type_name}]')
         with alter_button_col:
-            alter_button = st.button(label='Alterar', key=f'update{farmer.name}')
+            alter_button = st.button(label='Alterar', key=f'update{farmer.document_type_name}')
         with delete_button_col:
-            delete_button = st.button(label='Excluir', key=f'delete{farmer.name}')
+            delete_button = st.button(label='Excluir', key=f'delete{farmer.document_type_name}')
 
         if alter_button:
             st.query_params['id'] = farmer.document
