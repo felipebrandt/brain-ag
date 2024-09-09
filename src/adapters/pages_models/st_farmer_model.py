@@ -28,6 +28,7 @@ def update(has_validation):
             raw_document = st.text_input(label='document',
                                          placeholder='Digite o CPF/CNPJ do Produtor',
                                          value=input_values['document'],
+                                         disabled=True,
                                          label_visibility='hidden')
 
         update_button = st.form_submit_button(label='Salvar')
