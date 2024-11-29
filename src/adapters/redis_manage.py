@@ -24,6 +24,17 @@ class EnvironmentKeys:
 
 
 if __name__ == '__main__':
+    print('')
+    # redis_client.set('DB', 'defaultdb')
+    # redis_client.set('HOST', '')
+    # redis_client.set('USER', '')
+    # redis_client.set('PASSWORD', '')
+    # redis_client.set('PORT', '5432')
+    # redis_client.set('DBL', '')
+    # redis_client.set('HOSTL', '')
+    # redis_client.set('USERL', '')
+    # redis_client.set('PASSWORDL', '')
+    # redis_client.set('PORTL', '5432')
     pass
 
 
